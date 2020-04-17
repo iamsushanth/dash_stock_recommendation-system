@@ -24,7 +24,6 @@ MarkupSafe==1.1.1
 multitasking==0.0.9
 newsapi==0.1.1
 newsapi-python==0.2.6
-nltk==3.5
 numpy==1.18.2
 oauthlib==3.1.0
 pandas==1.0.3

@@ -51,3 +51,4 @@ Werkzeug==1.0.1
 yfinance==0.1.54
 zope.interface==5.1.0
 gunicorn==19.9.0
+nltk

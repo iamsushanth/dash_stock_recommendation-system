@@ -15,7 +15,6 @@ from datetime import datetime
 from datetime import timedelta
 from textblob import TextBlob
 
-from newsapi import NewsApiClient
 
 
 def moving_avg(df):
@@ -26,8 +25,8 @@ def moving_avg(df):
     df = df[['Close', 'HighLoad', 'Change', 'Volume']]
 
     df['MA10'] = df['Close'].rolling(10).mean()
-    df['MA30'] = df['Close'].rolling(10).mean()
-    df['MA50'] = df['Close'].rolling(10).mean()
+    df['MA30'] = df['Close'].rolling(30).mean()
+    df['MA50'] = df['Close'].rolling(50).mean()
 
     df['rets'] = df['Close'] / df['Close'].shift(1) - 1
 
@@ -61,20 +60,14 @@ def make_predictions(df):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
     
-
-
     # Linear regression
     model = LinearRegression(n_jobs=-1)
     model.fit(X_train, y_train)
 
 
-    
-
-
     # KNN Regression
     model_knn = KNeighborsRegressor(n_neighbors=2)
     model_knn.fit(X_train, y_train)
-
 
 
     # Bayesian Ridge Regression

@@ -3,12 +3,12 @@
 ## Major Project [ 2019-20]
 
 ### Steps To Run Application
-cd dash_stock_recommendation-system
-virtualenv env
-source env/bin/activate
-pip install -r requirements.txt
+1. cd dash_stock_recommendation-system
+2. virtualenv env
+3. source env/bin/activate
+4. pip install -r requirements.txt
 
-python app.py
+5. python app.py
 
 
 # B11 

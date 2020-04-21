@@ -81,11 +81,15 @@ def make_predictions(df):
     confidence_model_knn = model_knn.score(X_test,y_test)
     confidence_model_by = model_by.score(X_test,y_test)
     
+    reg = confidencereg * 100
+    knn = confidence_model_knn * 100
+    by = confidence_model_by * 100
+
+    score = " Regression {}\n KNN {}\n Bayesian {}\n ".format(reg,knn,by)
 
     # # results
-    # print('The linear regression confidence is:',confidencereg*100)
-    # print('The quadratic regression 2 confidence is:',confidence_model_knn*100)
-    # print('The quadratic regression 3 confidence is:',confidence_model_by*100)
+    print(score)
+    
     
 
     #Create new columns
@@ -131,7 +135,7 @@ def make_predictions(df):
         
     
 
-    return df.index.format(formatter=lambda x: x.strftime('%Y-%m-%d')), df['Adj Close'].to_list(), df['Forecast_reg'].to_list(), df['Forecast_knn'].to_list(), df['forecast_by'].to_list(),confidencereg,confidence_model_knn,confidence_model_by
+    return df.index.format(formatter=lambda x: x.strftime('%Y-%m-%d')), df['Adj Close'].to_list(), df['Forecast_reg'].to_list(), df['Forecast_knn'].to_list(), df['forecast_by'].to_list(), score
 
 
 def retrieving_tweets_polarity(symbol):

@@ -1,21 +1,29 @@
-import dash
+import base64
+import os
+import sys
+sys.path.insert(0, os.path.realpath(os.path.dirname(__file__)))
+os.chdir(os.path.realpath(os.path.dirname(__file__)))
+
 import yfinance as yf
 import pandas as pd
-import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output
+from flask import Flask
+import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.dependencies import Input, Output
+import dash_bootstrap_components as dbc
+
 from datetime import datetime 
 from datetime import timedelta
 
 import model
 
-
-
 external_stylesheets=[dbc.themes.BOOTSTRAP]
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
+# Normally, Dash creates its own Flask server internally. By creating our own,
+# we can create a route for downloading files directly:
+server = Flask(__name__)
+app = dash.Dash(server=server, external_stylesheets=external_stylesheets)
 
 controls = dbc.Card(
     [
@@ -29,10 +37,12 @@ controls = dbc.Card(
                         {'label': 'Coke', 'value': 'COKE'},
                         {'label': 'Tesla', 'value': 'TSLA'},
                         {'label': 'Apple', 'value': 'AAPL'},
-                        {'label': 'Amazon', 'value': 'AMZN'},
+            
                     ],
                     value='GOOGL',
                 ),
+                html.Br(),
+                html.P(id="output"),
             ]
         ),
     ],
@@ -72,8 +82,9 @@ def get_data(selected_dropdown_value):
     
     df = model.moving_avg(dff)
     
-    dt, dd, reg, knn, by, a, b, c = model.make_predictions(dff)
+    dt, dd, reg, knn, by, sc = model.make_predictions(dff)
     
+    html.P(sc)
 
     return {
         'data': [{
@@ -136,6 +147,7 @@ def get_data(selected_dropdown_value):
 def sentiment(input_value):
 
     polarity = model.retrieving_tweets_polarity(input_value)
+
     if polarity > 0:
         return 'According to the predictions and twitter sentiment analysis -> Investing in "{}" is a GREAT idea!'.format(str(input_value))
     
@@ -147,5 +159,7 @@ def sentiment(input_value):
 
 
 
-if __name__ == '__main__':
-    app.run_server()
+
+
+if __name__ == "__main__":
+    app.run_server(debug=True, port=8888)

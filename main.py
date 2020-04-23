@@ -4,7 +4,6 @@ import sys
 sys.path.insert(0, os.path.realpath(os.path.dirname(__file__)))
 os.chdir(os.path.realpath(os.path.dirname(__file__)))
 
-import yfinance as yf
 import pandas as pd
 from flask import Flask
 import dash
@@ -116,10 +115,10 @@ def get_data(selected_dropdown_value):
     
     df = model.moving_avg(dfff)
     
-    dff, sc = model.make_predictions(dfff)
+    dff = model.make_predictions(dfff)
     
     
-    html.P('{}'.format(sc))
+    
 
     return {
         'data': [{

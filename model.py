@@ -97,13 +97,14 @@ def make_predictions(df):
     forecast_by = model_by.predict(X_forecast)
     
 
+    
+
+
     #Process all new columns data
     df['Forecast_reg'] = np.nan
 
     last_date = df.iloc[-1].name
-    last_date = datetime.strptime(last_date, '%Y-%m-%d')
-    last_unix = last_date
-    print(last_unix)
+    last_unix = datetime.strptime(last_date, '%Y-%m-%d')
     next_unix = last_unix + timedelta(days=1)
 
     for i in forecast_reg:
@@ -113,23 +114,30 @@ def make_predictions(df):
         df['Forecast_reg'].loc[next_date] = i
         
     df['Forecast_knn'] = np.nan
+
+    last_date = df.iloc[-26].name
+    last_unix = last_date
+    next_unix = last_unix + timedelta(days=1)
         
     for i in forecast_knn:
         next_date = next_unix
         next_unix += timedelta(days=1)
         df['Forecast_knn'].loc[next_date] = i
 
-    
     df['forecast_by'] = np.nan
+
+    last_date = df.iloc[-26].name
+    last_unix = last_date
+    next_unix = last_unix + timedelta(days=1)
         
     for i in forecast_by:
         next_date = next_unix
         next_unix += timedelta(days=1)
         df['forecast_by'].loc[next_date] = i
         
-    #print(df)
+    
 
-    return df,score
+    return df
 
 
 def retrieving_tweets_polarity(symbol):

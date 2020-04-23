@@ -11,10 +11,10 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import train_test_split
 
-from datetime import datetime 
+from datetime import datetime
 from datetime import timedelta
 from textblob import TextBlob
-
+import time
 
 
 def moving_avg(df):
@@ -87,8 +87,7 @@ def make_predictions(df):
 
     score = " Regression {}\n KNN {}\n Bayesian {}\n ".format(reg,knn,by)
 
-    # # results
-    print(score)
+    
     
     
 
@@ -102,7 +101,9 @@ def make_predictions(df):
     df['Forecast_reg'] = np.nan
 
     last_date = df.iloc[-1].name
+    last_date = datetime.strptime(last_date, '%Y-%m-%d')
     last_unix = last_date
+    print(last_unix)
     next_unix = last_unix + timedelta(days=1)
 
     for i in forecast_reg:
@@ -112,30 +113,23 @@ def make_predictions(df):
         df['Forecast_reg'].loc[next_date] = i
         
     df['Forecast_knn'] = np.nan
-
-    last_date = df.iloc[-26].name
-    last_unix = last_date
-    next_unix = last_unix + timedelta(days=1)
         
     for i in forecast_knn:
         next_date = next_unix
         next_unix += timedelta(days=1)
         df['Forecast_knn'].loc[next_date] = i
 
+    
     df['forecast_by'] = np.nan
-
-    last_date = df.iloc[-26].name
-    last_unix = last_date
-    next_unix = last_unix + timedelta(days=1)
         
     for i in forecast_by:
         next_date = next_unix
         next_unix += timedelta(days=1)
         df['forecast_by'].loc[next_date] = i
         
-    
+    #print(df)
 
-    return df.index.format(formatter=lambda x: x.strftime('%Y-%m-%d')), df['Adj Close'].to_list(), df['Forecast_reg'].to_list(), df['Forecast_knn'].to_list(), df['forecast_by'].to_list(), score
+    return df,score
 
 
 def retrieving_tweets_polarity(symbol):

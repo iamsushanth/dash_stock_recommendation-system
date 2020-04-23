@@ -15,8 +15,15 @@ import dash_bootstrap_components as dbc
 
 from datetime import datetime 
 from datetime import timedelta
-
+import urllib3, shutil
 import model
+
+
+UPLOAD_DIRECTORY = "../dash/data"
+
+if not os.path.exists(UPLOAD_DIRECTORY):
+    os.makedirs(UPLOAD_DIRECTORY)
+
 
 external_stylesheets=[dbc.themes.BOOTSTRAP]
 
@@ -51,11 +58,13 @@ controls = dbc.Card(
 
 app.layout = dbc.Container(
     [
-        html.H1("Stock Recomandation System"),
+        html.H1("Stock Recomandation System", style={
+            'textAlign': 'center'}),
         html.Hr(),
         dbc.Row(
             [
                 dbc.Col(controls, md=4),
+                
                 dbc.Col(dcc.Graph(id="my-graph"), md=8),
             ],
             align="left",
@@ -77,14 +86,40 @@ app.layout = dbc.Container(
 
 @app.callback(Output('my-graph', 'figure'), [Input('my-dropdown', 'value')])
 def get_data(selected_dropdown_value):
-    data = yf.download(selected_dropdown_value, start=datetime(2008, 5, 5), end=datetime.now())
+
+
+    date = datetime.today()
+    ts = datetime.timestamp(date)
+    start = int(ts)
+
+    tss = datetime.today() - timedelta(days=3650)
+    tss = datetime.timestamp(tss)
+    end = int(tss)
+    end
+
+    url = 'https://query1.finance.yahoo.com/v7/finance/download/{}?period1={}&period2={}&interval=1d&events=history'.format(selected_dropdown_value,end,start)
+    c = urllib3.PoolManager()
+    filename = "../dash/data/{}.csv".format(selected_dropdown_value)
+
+
+    with c.request('GET', url, preload_content=False) as res, open(filename, 'wb') as out_file:
+        shutil.copyfileobj(res, out_file)
+
+    data = pd.read_csv("../dash/data/{}.csv".format(selected_dropdown_value))
+
+
+
+    #data = yf.download(selected_dropdown_value, start=datetime(2008, 5, 5), end=datetime.now())
+
     dff = pd.DataFrame(data)
+    dfff = dff.set_index('Date')
     
-    df = model.moving_avg(dff)
+    df = model.moving_avg(dfff)
     
-    dt, dd, reg, knn, by, sc = model.make_predictions(dff)
+    dff, sc = model.make_predictions(dfff)
     
-    html.P(sc)
+    
+    html.P('{}'.format(sc))
 
     return {
         'data': [{
@@ -118,20 +153,20 @@ def get_data(selected_dropdown_value):
         },
         {
             'x': dff.index,
-            'y': reg,
+            'y': dff['Forecast_reg'],
             'name': 'Regression',
             
         },
         {
             'x': dff.index,
-            'y': knn,
+            'y': dff['Forecast_knn'],
             'name': 'KNN',
             
 
         },
         {
             'x': dff.index,
-            'y': by,
+            'y': dff['forecast_by'],
             'name': 'Bayesian',
             
 
@@ -139,6 +174,7 @@ def get_data(selected_dropdown_value):
         ],
         'layout': {'margin': {'l': 60, 'r': 60, 't': 30, 'b': 30},'title': 'Stock Data Visualization', 'align':'center'}
     }
+
 
 @app.callback(
     Output(component_id='my-div', component_property='children'),

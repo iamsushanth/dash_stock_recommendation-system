@@ -16,6 +16,8 @@ from datetime import timedelta
 from textblob import TextBlob
 import time
 
+nltk.download('punkt')
+
 
 def moving_avg(df):
     df = df[['Open', 'High', 'Low', 'Close', 'Volume']]
@@ -31,6 +33,7 @@ def moving_avg(df):
     df['rets'] = df['Close'] / df['Close'].shift(1) - 1
 
     return df
+
 
 
 
@@ -140,16 +143,19 @@ def make_predictions(df):
     return df
 
 
+
+
+
 def retrieving_tweets_polarity(symbol):
 
-    consumer_key= '9N4LhWmdtUZT0sbVpgbMyqEY5'
-    consumer_secret= '89HtqbHBzmaD9YQSPO6hdU7PQHoMHRSF6NvwxlTCfsY0HZZtZ6'
-    access_token='863387980492414976-6ljbFkaBtFMQv3RO8pwAcZGlkI3HXzP'
-    access_token_secret='mkxCMzl3p9Eydhenw0iTyN0kKmgnXI8WyI813khmwDSfq'
+    consumer_key = '9N4LhWmdtUZT0sbVpgbMyqEY5'
+    consumer_secret = '89HtqbHBzmaD9YQSPO6hdU7PQHoMHRSF6NvwxlTCfsY0HZZtZ6'
+    access_token ='863387980492414976-6ljbFkaBtFMQv3RO8pwAcZGlkI3HXzP'
+    access_token_secret ='mkxCMzl3p9Eydhenw0iTyN0kKmgnXI8WyI813khmwDSfq'
 
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
-    user = tweepy.API(auth)
+    user = tweepy.API(auth, wait_on_rate_limit=True)
 
     tweets = tweepy.Cursor(user.search, q=str(symbol), tweet_mode='extended', lang='en').items(100)
 

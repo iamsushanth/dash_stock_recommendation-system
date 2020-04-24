@@ -43,23 +43,40 @@ controls = dbc.Card(
                         {'label': 'Coke', 'value': 'COKE'},
                         {'label': 'Tesla', 'value': 'TSLA'},
                         {'label': 'Apple', 'value': 'AAPL'},
+                        {'label': 'AMD', 'value': 'AMD'},
+                        {'label': 'Microsoft Corporation', 'value': 'MSFT'},
+                        {'label': 'AT&T Inc.', 'value': 'T'}
             
                     ],
                     value='GOOGL',
                 ),
                 html.Br(),
-                html.P(id="output"),
+                
             ]
         ),
+    
+        
     ],
     body=True,
 )
 
 app.layout = dbc.Container(
     [
-        html.H1("Stock Recomandation System", style={
+        html.H1("Stock Recommendation System", style={
             'textAlign': 'center'}),
         html.Hr(),
+
+        dbc.Alert(
+    [
+        html.H4("Forecasting Stock Predictions Using Machine Learning!", className="alert-heading"),
+        html.P(
+            "Major Project [2019-20] "
+            "Information Science,"
+            " National Institute of Engineering, Mysuru - 570008"
+        ),
+    ]
+),
+
         dbc.Row(
             [
                 dbc.Col(controls, md=4),
@@ -75,6 +92,11 @@ app.layout = dbc.Container(
             'font':'16px',
 
         }),
+
+        
+        html.Br(),
+        html.Br(),
+        html.Br(),
 
     ],
     fluid=True,
@@ -116,8 +138,6 @@ def get_data(selected_dropdown_value):
     df = model.moving_avg(dfff)
     
     dff = model.make_predictions(dfff)
-    
-    
     
 
     return {
@@ -175,9 +195,10 @@ def get_data(selected_dropdown_value):
     }
 
 
+
 @app.callback(
     Output(component_id='my-div', component_property='children'),
-    [Input(component_id='my-dropdown', component_property='value')]
+    [Input('my-dropdown', 'value')]
 )
 def sentiment(input_value):
 

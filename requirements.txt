@@ -35,7 +35,7 @@ sklearn==0.0
 textblob==0.15.3
 tqdm==4.45.0
 tweepy==3.8.0
-urllib3==1.25.9
+urllib3==1.26.5
 Werkzeug==1.0.1
 yfinance==0.1.54
 gunicorn
